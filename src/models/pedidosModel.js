@@ -112,6 +112,35 @@ const pedidosModel = {
             throw error;
         }
 
+    },
+
+    //-------------------
+    //DELETAR PEDIDOS
+    //-------------------
+    deletarPedido: async (idPedido) => {
+
+        const pool = await getConnection();
+
+        const transaction = new sql.Transaction(pool);
+        await transaction.begin(); // inicia a transação
+
+        try {
+
+            const querySQL = 'DELETE FROM  Pedidos WHERE idPedido = @idPedido';
+
+            await transaction.request()
+                .input('idPedido', sql.UniqueIdentifier, idPedido)
+                .query(querySQL);
+
+                await transaction.commit();
+
+
+
+        } catch (error) {
+            await transaction.rollback();
+            console.error('Erro ao deletar o pedido:', error);
+            throw error;
+        }
     }
 
 }
