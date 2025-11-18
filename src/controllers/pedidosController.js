@@ -67,6 +67,58 @@ const pedidosController = {
             res.status(500).json({ erro: "Erro interno no servidor ao cadastrar pedido" });
 
         }
+    },
+
+    //-------------------
+    // ATUALIZAR PEDIDO
+    // PUT /pedidos
+    //-------------------
+    atualizarPedido: async (req, res) => {
+        try {
+
+            const { idPedido } = req.params;
+            const { idCliente, dataPedido, tipoEntrega, distanciaKM, pesoDaCarga, valorBaseKM, valorBaseKG } = req.body;
+
+            if (idPedido.length != 36) {
+                return res.status(400).json({ erro: "id do pedido invalido" });
+            }
+            
+            const pedido = await pedidosModel.buscarUm(idPedido);
+
+            if (!pedido || pedido.length !== 1) {
+                return res.status(404).json({ erro: "Pedido não encontrado" });
+            }
+
+            if (idCliente) {
+                if (idCliente.length != 36) {
+                    return res.status(400).json({ erro: "id do cliente invalido" });
+                }
+
+                const cliente = await clienteModel.buscarUm(idCliente);
+
+                if (!cliente || cliente.length !== 1) {
+                    return res.status(404).json({ erro: "Cliente não encontrado" });
+                }
+            }
+
+            const pedidoAtual = pedido[0];
+
+            const idClienteAtualizado = idCliente ?? pedidoAtual.idCliente
+            const dataPedidoAtualizado = dataPedido ?? pedidoAtual.dataPedido
+            const tipoEntregaAtualizado = tipoEntrega ?? pedidoAtual.tipoEntrega
+            const distanciaKMatualizado = distanciaKM ?? pedidoAtual.distanciaKM
+            const pesoDaCargaAtualizado = pesoDaCarga ?? pedidoAtual.pesoDaCarga
+            const valorBaseKMatualizado = valorBaseKM ?? pedidoAtual.valorBaseKM
+            const valorBaseKGatualizado = valorBaseKG ?? pedidoAtual.valorBaseKG
+
+            await pedidosModel.atualizarPedido(idPedido, idClienteAtualizado, dataPedidoAtualizado, tipoEntregaAtualizado, distanciaKMatualizado, pesoDaCargaAtualizado, valorBaseKMatualizado, valorBaseKGatualizado);
+
+            res.status(200).json({ mensagem: "Pedido atualizado com sucesso" });
+
+        } catch (error) {
+            console.error("Erro ao atualizar pedido:", error);
+            res.status(500).json({ erro: "Erro interno no servidor ao atualizar pedido" });
+        }
     }
 }
 
