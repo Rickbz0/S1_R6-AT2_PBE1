@@ -14,7 +14,7 @@ const clienteController = {
             if (idCliente) {
 
                 if (idCliente.length != 36) {
-                    return res.status(400).json({ erro: 'Id do produto inválido!' });
+                    return res.status(400).json({ erro: 'Id do cliente inválido!' });
                 }
 
                 let cliente = await clienteModel.buscarUm(idCliente);

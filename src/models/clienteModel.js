@@ -69,26 +69,32 @@ const clienteModel = {
     //ATUALIZAR CLIENTES
     //-------------------
     atualizarCliente: async (idCliente, nomeCliente, cpfCliente, telefoneCliente, emailCliente, enderecoCliente) => {
-        const pool = await getConnection();
-
-        const querysql = `
-        UPDATE Clientes
-            SET nomeCliente = @nomeCliente,
-                cpfCliente = @cpfCliente,
-                telefoneCliente = @telefoneCliente, 
-                emailCliente = @emailCliente, 
-                enderecoCliente = @enderecoCliente
-            WHERE idCliente = @idCliente 
-        `
-
-        await pool.request()
-            .input('idCliente', sql.UniqueIdentifier, idCliente)
-            .input('nomeCliente', sql.VarChar(100), nomeCliente)
-            .input('cpfCliente', sql.VarChar(11), cpfCliente)
-            .input('telefoneCliente', sql.Char(11), telefoneCliente)
-            .input('emailCliente', sql.VarChar(200), emailCliente)
-            .input('enderecoCliente', sql.VarChar(200), enderecoCliente)
-            .query(querysql);
+        try {
+            const pool = await getConnection();
+    
+            const querysql = `
+            UPDATE Clientes
+                SET nomeCliente = @nomeCliente,
+                    cpfCliente = @cpfCliente,
+                    telefoneCliente = @telefoneCliente, 
+                    emailCliente = @emailCliente, 
+                    enderecoCliente = @enderecoCliente
+                WHERE idCliente = @idCliente 
+            `
+    
+            await pool.request()
+                .input('idCliente', sql.UniqueIdentifier, idCliente)
+                .input('nomeCliente', sql.VarChar(100), nomeCliente)
+                .input('cpfCliente', sql.VarChar(11), cpfCliente)
+                .input('telefoneCliente', sql.Char(11), telefoneCliente)
+                .input('emailCliente', sql.VarChar(200), emailCliente)
+                .input('enderecoCliente', sql.VarChar(200), enderecoCliente)
+                .query(querysql);
+            
+        } catch (error) {
+            console.error('Erro ao atualizar o Cliente:',error);
+            throw error;
+        }
     },
 
     //-------------------
