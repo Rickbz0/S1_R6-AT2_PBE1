@@ -52,3 +52,59 @@
 }
 ```
 
+### Pedidos
+
+#### GET /pedidos
+- **Descrição**: Listar um ou mais pedidos
+- **Response**: Array de pedidos
+
+#### POST /clientes
+- **Descrição**: Cria um novo pedido
+- **Body**: 
+```
+{
+	"idCliente": "DD485012-11AE-44CD-8472-EC9787290D3E",
+	"dataPedido": "2025-11-18",
+	"tipoEntrega": "NORMAL", 
+	"distanciaKM": 50.00, 
+	"pesoDaCarga": 10.00, 
+	"valorBaseKM": 5.00, 
+	"valorBaseKG": 2.00 
+	
+}
+```
+- **Response**: 
+```
+{
+	"message": "Pedido cadastrado com sucesso!"
+}
+```
+
+#### PUT /pedidos
+- **Descrição**: Atualiza os dados do cliente
+- **Body**: 
+```
+{
+	
+	"tipoEntrega": "URGENTE",
+	"distanciaKM": 60
+	
+}
+```
+- **Response**: 
+```
+{
+	"mensagem": "Pedido atualizado com sucesso"
+}
+```
+
+#### DELETE /clientes
+- **Descrição**: Deleta um cliente
+- **Response**: 
+```
+{
+	"message": "cliente deletado com sucesso"
+}
+```
+
+
