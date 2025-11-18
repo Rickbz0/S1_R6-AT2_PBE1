@@ -54,7 +54,7 @@ const pedidosModel = {
 
 
             let querysql = `
-            INSERT INTO Clientes
+            INSERT INTO Pedidos
             (idCliente, dataPedido, tipoEntrega, distanciaKM, pesoDaCarga, valorBaseKM, valorBaseKG) 
             VALUES(@idCliente, @dataPedido, @tipoEntrega, @distanciaKM, @pesoDaCarga, @valorBaseKM, @valorBaseKG)`;
 
