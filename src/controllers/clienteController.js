@@ -71,7 +71,7 @@ const clienteController = {
             }
     
             const cliente = await clienteModel.buscarUm(idCliente);
-            if (!cliente || cliente !== 1) {
+            if (!cliente || cliente.length !== 1) {
                 return res.status(404).json({erro: 'Cliente não encontrado'});
             }
     

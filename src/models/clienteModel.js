@@ -68,7 +68,7 @@ const clienteModel = {
     //-------------------
     //ATUALIZAR CLIENTES
     //-------------------
-    atualizarCliente: async (nomeCliente, cpfCliente, telefoneCliente, emailCliente, enderecoCliente) => {
+    atualizarCliente: async (idCliente, nomeCliente, cpfCliente, telefoneCliente, emailCliente, enderecoCliente) => {
         const pool = await getConnection();
 
         const querysql = `
@@ -82,6 +82,7 @@ const clienteModel = {
         `
 
         await pool.request()
+            .input('idCliente', sql.UniqueIdentifier, idCliente)
             .input('nomeCliente', sql.VarChar(100), nomeCliente)
             .input('cpfCliente', sql.VarChar(11), cpfCliente)
             .input('telefoneCliente', sql.Char(11), telefoneCliente)
