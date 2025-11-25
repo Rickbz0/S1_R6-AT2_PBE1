@@ -209,17 +209,11 @@ const pedidosController = {
             //validação do pedido
             if (idPedido.length != 36) {
                 return res.status(400).json({ erro: "id do pedido invalido" });
-            }
-
-            const pedido = await pedidosModel.buscarUm(idPedido);
-
-            if (!pedido || pedido.length !== 1) {
-                return res.status(404).json({ erro: "Pedido não encontrado" });
-            }
+            };
 
             await pedidosModel.deletarPedido(idPedido);
 
-            res.status(200).json({ mensagem: "Pedido deletado com sucesso" });
+            res.status(200).json({ mensagem: "Pedido e entrega deletado com sucesso" });
 
         } catch (error) {
             console.error("Erro ao deletar pedido:", error);

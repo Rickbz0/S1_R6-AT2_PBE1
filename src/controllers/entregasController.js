@@ -86,32 +86,7 @@ const entregasController = {
             console.error("Erro ao atualizar pedido:", error);
             res.status(500).json({ erro: "Erro interno no servidor ao atualizar pedido" });
         }
-    },
-
-    deletarEntrega: async (req, res) => {
-            try {
-                const {idEntrega} = req.params;
-                
-                //validação do pedido
-                if (idEntrega.length != 36) {
-                    return res.status(400).json({erro: "id da entrega invalido"});
-                }
-                
-                const entrega = await entregasModel.buscarUm(idEntrega);
-                
-                if (!entrega || entrega.length !==1 ) {
-                    return res.status(404).json({erro: "entrega não encontrado"});
-                }
-                
-                await entregasModel.deletarEntrega(idEntrega);
-
-                res.status(200).json({mensagem: "entrega deletada com sucesso"});
-                
-            } catch (error) {
-                console.error("Erro ao deletar entrega:", error);
-                res.status(500).json({erro: "Erro interno no servidor ao deletar entrega"}); 
-            }
-        }
+    }
 
 }
 

@@ -8,7 +8,7 @@ router.get("/pedidos", pedidosController.listarPedido);
 router.post("/pedidos", pedidosController.criarPedido);
 // PUT /pedidos -> atualizar um pedido e uma entrega
 router.put("/pedidos/:idPedido", pedidosController.atualizarPedido);
-// DELETE /pedidos -> deletar pedido
+// DELETE /pedidos -> deletar pedido(junto deleta a entrega)
 router.delete("/pedidos/:idPedido", pedidosController.deletarPedido);
 
 module.exports = { pedidoRoutes: router };

@@ -68,7 +68,7 @@ const pedidosModel = {
                 .input('valorBaseKM', sql.Decimal(10, 2), valorBaseKM)
                 .input('valorBaseKG', sql.Decimal(10, 2), valorBaseKG)
                 .query(querysql);
-'            '
+            '            '
             const idPedido = result.recordset[0].idPedido;
 
             console.log(idPedido);
@@ -149,14 +149,20 @@ const pedidosModel = {
 
         try {
 
-            const querySQL = `
-            DELETE FROM  Pedidos 
-            WHERE idPedido = @idPedido
-            `;
-
+            //delete do pedido
             await transaction.request()
                 .input('idPedido', sql.UniqueIdentifier, idPedido)
-                .query(querySQL);
+                .query(`
+                    DELETE FROM  Pedidos
+                    WHERE idPedido = @idPedido`);
+
+            //delete da entrega
+            await transaction.request()
+                .input('idEntrega', sql.UniqueIdentifier, idEntrega)
+                .query(`
+                     DELETE FROM  Entregas
+                     WHERE idEntrega = @idEntrega
+                     `);
 
             await transaction.commit();
 
@@ -164,29 +170,7 @@ const pedidosModel = {
 
         } catch (error) {
             await transaction.rollback();
-            console.error('Erro ao deletar o pedido:', error);
-            throw error;
-        }
-    },
-
-    //-----------------
-    //DELETAR ENTREGA
-    //-----------------
-    deletarEntrega: async (idEntrega) => {
-        try {
-            const pool = await getConnection();
-
-            const querySQL = `
-            DELETE FROM  Entregas 
-            WHERE idEntrega = @idEntrega
-            `;
-
-            await pool.request()
-                .input('idEntrega', sql.UniqueIdentifier, idEntrega)
-                .query(querySQL);
-
-        } catch (error) {
-            console.error('Erro ao deletar o entrega:', error);
+            console.error('Erro ao deletar o pedido e/ou a entrega', error);
             throw error;
         }
     }
