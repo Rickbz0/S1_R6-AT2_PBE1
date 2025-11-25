@@ -40,10 +40,10 @@ const pedidosModel = {
             throw error;
         }
     },
-    //--------------
-    //CRIAR PEDIDOS
-    //--------------
-    inserirPedido: async (idCliente, dataPedido, tipoEntrega, distanciaKM, pesoDaCarga, valorBaseKM, valorBaseKG) => {
+    //-------------------------
+    //CRIAR PEDIDOS E ENTREGAS
+    //-------------------------
+    inserirPedido: async (idCliente, dataPedido, tipoEntrega, distanciaKM, pesoDaCarga, valorBaseKM, valorBaseKG, valorDistancia, valorPeso, acrescimo, desconto, taxaExtra, valorFinal, statusEntrega) => {
 
         const pool = await getConnection();
 
@@ -52,13 +52,14 @@ const pedidosModel = {
 
         try {
 
-
+            //querysql de pedidos
             let querysql = `
             INSERT INTO Pedidos
             (idCliente, dataPedido, tipoEntrega, distanciaKM, pesoDaCarga, valorBaseKM, valorBaseKG) 
+            OUTPUT INSERTED.idPedido
             VALUES(@idCliente, @dataPedido, @tipoEntrega, @distanciaKM, @pesoDaCarga, @valorBaseKM, @valorBaseKG)`;
 
-            await transaction.request()
+            const result = await transaction.request()
                 .input('idCliente', sql.UniqueIdentifier, idCliente)
                 .input('dataPedido', sql.Date, dataPedido)
                 .input('tipoEntrega', sql.VarChar(7), tipoEntrega)
@@ -66,6 +67,27 @@ const pedidosModel = {
                 .input('pesoDaCarga', sql.Decimal(10, 2), pesoDaCarga)
                 .input('valorBaseKM', sql.Decimal(10, 2), valorBaseKM)
                 .input('valorBaseKG', sql.Decimal(10, 2), valorBaseKG)
+                .query(querysql);
+'            '
+            const idPedido = result.recordset[0].idPedido;
+
+            console.log(idPedido);
+
+            //querysql de entregas
+            querysql = `
+            INSERT INTO Entregas(idPedido, valorDistancia, valorPeso, acrescimo, desconto, taxaExtra, valorFinal, statusEntrega)
+            VALUES(@idPedido, @valorDistancia, @valorPeso, @acrescimo, @desconto, @taxaExtra, @valorFinal, @statusEntrega)
+            `;
+
+            await transaction.request()
+                .input('idPedido', sql.UniqueIdentifier, idPedido)
+                .input('valorDistancia', sql.Decimal(10, 2), valorDistancia)
+                .input('valorPeso', sql.Decimal(10, 2), valorPeso)
+                .input('acrescimo', sql.Decimal(10, 2), acrescimo)
+                .input('desconto', sql.Decimal(10, 2), desconto)
+                .input('taxaExtra', sql.Decimal(10, 2), taxaExtra)
+                .input('valorFinal', sql.Decimal(10, 2), valorFinal)
+                .input('statusEntrega', sql.VarChar(9), statusEntrega)
                 .query(querysql);
 
 
@@ -77,6 +99,7 @@ const pedidosModel = {
             throw error; // passa o erro para o controller tratar
         }
     },
+
     //------------------
     //ATUALIZAR PEDIDOS
     //------------------
@@ -135,13 +158,35 @@ const pedidosModel = {
                 .input('idPedido', sql.UniqueIdentifier, idPedido)
                 .query(querySQL);
 
-                await transaction.commit();
+            await transaction.commit();
 
 
 
         } catch (error) {
             await transaction.rollback();
             console.error('Erro ao deletar o pedido:', error);
+            throw error;
+        }
+    },
+
+    //-----------------
+    //DELETAR ENTREGA
+    //-----------------
+    deletarEntrega: async (idEntrega) => {
+        try {
+            const pool = await getConnection();
+
+            const querySQL = `
+            DELETE FROM  Entregas 
+            WHERE idEntrega = @idEntrega
+            `;
+
+            await pool.request()
+                .input('idEntrega', sql.UniqueIdentifier, idEntrega)
+                .query(querySQL);
+
+        } catch (error) {
+            console.error('Erro ao deletar o entrega:', error);
             throw error;
         }
     }
