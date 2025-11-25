@@ -1,5 +1,6 @@
 const { pedidosModel } = require("../models/pedidosModel");
 const { clienteModel } = require("../models/clienteModel");
+const { entregasModel } = require("../models/entregasModel");
 //const { pedidoModel } = require("../models/pedidosModel");
 
 const pedidosController = {
@@ -50,7 +51,7 @@ const pedidosController = {
                 pesoDaCarga,
                 valorBaseKM,
                 valorBaseKG,
-                statusEntrega 
+                statusEntrega
             } = req.body;
 
             //criar PEDIDO
@@ -121,19 +122,19 @@ const pedidosController = {
 
 
             await pedidosModel.inserirPedido(
-                idCliente, 
-                dataPedido, 
-                tipoEntrega, 
-                distanciaKM, 
-                pesoDaCarga, 
-                valorBaseKM, 
+                idCliente,
+                dataPedido,
+                tipoEntrega,
+                distanciaKM,
+                pesoDaCarga,
+                valorBaseKM,
                 valorBaseKG,
-                valorDistancia, 
-                valorPeso, 
-                acrescimo, 
-                desconto, 
-                taxaExtra, 
-                valorFinal, 
+                valorDistancia,
+                valorPeso,
+                acrescimo,
+                desconto,
+                taxaExtra,
+                valorFinal,
                 statusEntregaDefault);
 
             res.status(201).json({ message: "Pedido cadastrado com sucesso!" });
@@ -145,7 +146,7 @@ const pedidosController = {
         }
     },
 
-    
+
     //-------------------
     // ATUALIZAR PEDIDO
     // PUT /pedidos
@@ -154,8 +155,17 @@ const pedidosController = {
         try {
 
             const { idPedido } = req.params;
-            const { idCliente, dataPedido, tipoEntrega, distanciaKM, pesoDaCarga, valorBaseKM, valorBaseKG } = req.body;
+            const {
+                idCliente,
+                dataPedido,
+                tipoEntrega,
+                distanciaKM,
+                pesoDaCarga,
+                valorBaseKM,
+                valorBaseKG,
+                statusEntrega } = req.body;
 
+            //atualizar pedido
             if (idPedido.length != 36) {
                 return res.status(400).json({ erro: "id do pedido invalido" });
             }
@@ -165,6 +175,9 @@ const pedidosController = {
             if (!pedido || pedido.length !== 1) {
                 return res.status(404).json({ erro: "Pedido não encontrado" });
             }
+
+            const pedidoAntigo = pedido[0];
+            const entregaAntigo = await entregasModel.buscarUm(idPedido);
 
             if (idCliente) {
                 if (idCliente.length != 36) {
@@ -178,17 +191,73 @@ const pedidosController = {
                 }
             }
 
+            statusEntregaDefault = "calculado";
+            if (statusEntrega) {
+                if (statusEntrega.toLowerCase() != "calculado" &&
+                    statusEntrega.toLowerCase() != "entregue" &&
+                    statusEntrega.toLowerCase() != "cancelado" &&
+                    statusEntrega.toLowerCase() != "em transito") {
+                    return res.status(400).json({ erro: "Status entrega inválido" });
+                }
+
+                statusEntregaDefault = statusEntrega;
+            }
+
             const pedidoAtual = pedido[0];
 
-            const idClienteAtualizado = idCliente ?? pedidoAtual.idCliente
-            const dataPedidoAtualizado = dataPedido ?? pedidoAtual.dataPedido
-            const tipoEntregaAtualizado = tipoEntrega ?? pedidoAtual.tipoEntrega
-            const distanciaKMatualizado = distanciaKM ?? pedidoAtual.distanciaKM
-            const pesoDaCargaAtualizado = pesoDaCarga ?? pedidoAtual.pesoDaCarga
-            const valorBaseKMatualizado = valorBaseKM ?? pedidoAtual.valorBaseKM
-            const valorBaseKGatualizado = valorBaseKG ?? pedidoAtual.valorBaseKG
+            const idClienteAtualizado = idCliente ?? pedidoAtual.idCliente;
+            const dataPedidoAtualizado = dataPedido ?? pedidoAtual.dataPedido;
+            const tipoEntregaAtualizado = tipoEntrega ?? pedidoAtual.tipoEntrega;
+            const distanciaKMatualizado = distanciaKM ?? pedidoAtual.distanciaKM;
+            const pesoDaCargaAtualizado = pesoDaCarga ?? pedidoAtual.pesoDaCarga;
+            const valorBaseKMatualizado = valorBaseKM ?? pedidoAtual.valorBaseKM;
+            const valorBaseKGatualizado = valorBaseKG ?? pedidoAtual.valorBaseKG;
+            const statusEntregaAtualizado = statusEntrega ?? pedidoAtual.statusEntrega;
 
-            await pedidosModel.atualizarPedido(idPedido, idClienteAtualizado, dataPedidoAtualizado, tipoEntregaAtualizado, distanciaKMatualizado, pesoDaCargaAtualizado, valorBaseKMatualizado, valorBaseKGatualizado);
+            const valorDistanciaAtualizado = distanciaKMatualizado * valorBaseKMatualizado;
+            const valorPesoAtualizado = pesoDaCargaAtualizado * valorBaseKGatualizado;
+
+            let valorBaseAtualizado = valorDistanciaAtualizado + valorPesoAtualizado;
+
+            let valorFinalAtualizado = valorBaseAtualizado;
+            let acrescimoAtualizado = 0;
+
+            if (tipoEntregaAtualizado == "urgente".toLowerCase()) {
+                acrescimoAtualizado = valorBaseAtualizado * 1.2;
+                valorFinalAtualizado = valorFinalAtualizado + acrescimoAtualizado;
+            };
+
+            let descontoAtualizado = 0;
+            if (valorFinalAtualizado > 500) {
+                descontoAtualizado = valorFinalAtualizado * 0.1;
+                valorFinalAtualizado = valorFinalAtualizado - descontoAtualizado;
+            };
+
+            let taxaExtraAtualizado = 0;
+            //se o peso da carga for maior que 50kg, adicionar uma taxa fixa de 15 reais
+            if (pesoDaCargaAtualizado > 50) {
+                taxaExtraAtualizado = 15;
+                valorFinalAtualizado = valorFinalAtualizado + taxaExtraAtualizado;
+            };
+
+
+            await pedidosModel.atualizarPedido(
+                idPedido, 
+                idClienteAtualizado, 
+                dataPedidoAtualizado, 
+                tipoEntregaAtualizado, 
+                distanciaKMatualizado, 
+                pesoDaCargaAtualizado, 
+                valorBaseKMatualizado, 
+                valorBaseKGatualizado,
+                acrescimoAtualizado,
+                descontoAtualizado,
+                statusEntregaAtualizado,
+                valorDistanciaAtualizado,
+                valorPesoAtualizado,
+                valorFinalAtualizado,
+                statusEntregaAtualizado
+            );
 
             res.status(200).json({ mensagem: "Pedido atualizado com sucesso" });
 
@@ -197,6 +266,7 @@ const pedidosController = {
             res.status(500).json({ erro: "Erro interno no servidor ao atualizar pedido" });
         }
     },
+
 
     //--------------------
     // DELETAR PEDIDOS
