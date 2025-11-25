@@ -98,13 +98,3 @@
 }
 ```
 
-#### DELETE /clientes
-- **Descrição**: Deleta um cliente
-- **Response**: 
-```
-{
-	"message": "cliente deletado com sucesso"
-}
-```
-
-
