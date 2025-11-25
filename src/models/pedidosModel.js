@@ -126,7 +126,10 @@ const pedidosModel = {
 
         try {
 
-            const querySQL = 'DELETE FROM  Pedidos WHERE idPedido = @idPedido';
+            const querySQL = `
+            DELETE FROM  Pedidos 
+            WHERE idPedido = @idPedido
+            `;
 
             await transaction.request()
                 .input('idPedido', sql.UniqueIdentifier, idPedido)
