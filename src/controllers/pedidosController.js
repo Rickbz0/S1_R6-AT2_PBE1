@@ -4,6 +4,18 @@ const { entregasModel } = require("../models/entregasModel");
 //const { pedidoModel } = require("../models/pedidosModel");
 
 const pedidosController = {
+
+    /**
+     * Controlador que lista todos os pedidos do banco de dados
+     * 
+     * @async
+     * @function listarPedidos
+     * @param {object} req - Objeto da requisicao "recebido do cliente HTTP"
+     * @param {object} res - Objeto da resposta do servidor "enviado ao cliente HTTP"
+     * @return {Promise<void>} Retorna uma resposta JSON com a lista de produtos.
+     * @throws Mostra no console e retorna erro 500 se ocorrer falha ao buscar os pedidos. 
+     */
+
     //-----------------
     //LISTAR PEDIDOS
     //GET /pedidos

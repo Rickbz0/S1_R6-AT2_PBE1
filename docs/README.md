@@ -58,7 +58,7 @@
 - **Descrição**: Listar um ou mais pedidos
 - **Response**: Array de pedidos
 
-#### POST /clientes
+#### POST /pedidos
 - **Descrição**: Cria um novo pedido
 - **Body**: 
 ```
@@ -81,7 +81,7 @@
 ```
 
 #### PUT /pedidos
-- **Descrição**: Atualiza os dados do cliente
+- **Descrição**: Atualiza os dados do pedido
 - **Body**: 
 ```
 {
@@ -98,3 +98,8 @@
 }
 ```
 
+### Entregas
+
+#### GET /entregas
+- **Descrição**: Listar uma ou mais entrega
+- **Response**: Array de entregas

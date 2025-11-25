@@ -43,10 +43,12 @@ const clienteController = {
 
             const { nomeCliente, cpfCliente, telefoneCliente, emailCliente, enderecoCliente } = req.body;
 
+            // Verifica se todos os campos obrigatórios foram preenchidos
             if (nomeCliente == undefined || cpfCliente == undefined || telefoneCliente == undefined || emailCliente == undefined || enderecoCliente == undefined) {
                 return res.status(400).json({ erro: 'Campos obrigatorios não preenchidos!' });
             }
 
+            // Chama o modelo para inserir o cliente no banco de dados
             await clienteModel.inserirCliente(nomeCliente, cpfCliente, telefoneCliente, emailCliente, enderecoCliente);
 
             res.status(201).json({ message: 'Cliente cadastrado com sucesso!' });
@@ -66,11 +68,14 @@ const clienteController = {
             const { idCliente } = req.params;
             const { nomeCliente, cpfCliente, telefoneCliente, emailCliente, enderecoCliente } = req.body;
     
+            // verifica o se o id do cliente é valido
             if (idCliente.length != 36) {
                 return res.status(400).json({ erro: 'Id do cliente inválido!' });
             }
     
             const cliente = await clienteModel.buscarUm(idCliente);
+
+            //verifica o cliente
             if (!cliente || cliente.length !== 1) {
                 return res.status(404).json({erro: 'Cliente não encontrado'});
             }
@@ -83,6 +88,7 @@ const clienteController = {
             const emailAtualizado= emailCliente ?? clienteAtual.emailCliente;
             const enderecoAtualizado= enderecoCliente ?? clienteAtual.enderecoCliente;
     
+            // Chama o model para atualizar os dados no banco, enviando os valores novos ou os antigos
             await clienteModel.atualizarCliente(idCliente, nomeAtualizado, cpfAtualizado, telefoneAtualizado, emailAtualizado, enderecoAtualizado);
             res.status(200).json({message: 'Cliente atualizado com sucesso'});
             
@@ -101,10 +107,11 @@ const clienteController = {
             
             const {idCliente} = req.params;
 
+            // Busca o cliente no banco para verificar se ele existe
             const cliente = await clienteModel.buscarUm(idCliente);
             console.log(cliente);
             
-
+            
             if (cliente.length !== 1) {
                 return res.status(404).json({erro:'cliente não encontrado'});
             }
