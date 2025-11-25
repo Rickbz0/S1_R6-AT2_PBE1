@@ -1,5 +1,8 @@
 # API Reference 
 
+### MODELO ENTIDADE RELACIONAMENTO
+![MODELO ENTIDADE RELACIONAMENTO](./image%20(4).png)
+
 ### Clientes
 
 #### GET /clientes
