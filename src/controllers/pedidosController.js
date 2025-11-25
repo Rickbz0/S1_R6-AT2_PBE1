@@ -11,7 +11,7 @@ const pedidosController = {
         try {
             const { idPedido } = req.query;
 
-            //para listar um unico cliente pelo id
+            //para listar um unico pedido pelo id
             if (idPedido) {
 
                 if (idPedido.length != 36) {
@@ -23,13 +23,13 @@ const pedidosController = {
 
             }
 
-            //para listar todos os clientes
+            //para listar todos os pedidos
             const pedidos = await pedidosModel.buscarTodos();
 
             res.status(200).json(pedidos)
 
         } catch (error) {
-            console.error('Erro ao listar todos os clientes', error);
+            console.error('Erro ao listar todos os pedidos', error);
             throw error;
         }
     },
