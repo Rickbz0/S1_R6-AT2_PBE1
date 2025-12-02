@@ -3,9 +3,9 @@ const router = express.Router();
 const { clienteController } = require("../controllers/clienteController");
 
 /**
- * Define as rotas relacionadas aos pedidos
+ * Define as rotas relacionadas aos clientes
  * 
- * @module pedidoRoutes 
+ * @module clienteRoutes 
  * 
  * @description
  * - GET /clientes -> lista todos os clientes do banco de dados.

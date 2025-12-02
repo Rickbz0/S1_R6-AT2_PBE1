@@ -3,9 +3,6 @@ const { entregasModel } = require("../models/entregasModel");
 const { pedidosModel } = require("../models/pedidosModel");
 
 const entregasController = {
-
-    
-
     //-----------------
     //LISTAR ENTREGAS
     //GET /entregas

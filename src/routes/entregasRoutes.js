@@ -4,9 +4,9 @@ const { entregasController } = require("../controllers/entregasController");
 const e = require("express");
 
 /**
- * Define as rotas relacionadas aos pedidos
+ * Define as rotas relacionadas as entregas
  * 
- * @module pedidoRoutes 
+ * @module entregasRoutes 
  * 
  * @description
  * - GET /entregas -> lista todas as entregas do banco de dados.

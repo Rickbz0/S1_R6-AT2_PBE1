@@ -2,6 +2,14 @@ const { UniqueIdentifier } = require("mssql");
 const { sql, getConnection } = require("../config/db");
 
 const clienteModel = {
+    /**
+     * busca todos os clientes e seus respectivos itens no banco de dados.
+     * 
+     * @async
+     * @function buscarTodos
+     * @returns {Promise<Array>} Retorna uma lista com todos os clientes e seus itens.
+     * @throws Mostra no console o erro e propaga o erro caso a busca falhe.
+     */
     //-------------------------
     //LISTAR TODOS OS CLIENTES
     //-------------------------

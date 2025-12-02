@@ -9,6 +9,12 @@ const pedidosModel = {
      * @function buscarTodos
      * @returns {Promise<Array>} Retorna uma lista com todos os pedidos e seus itens.
      * @throws Mostra no console o erro e propaga o erro caso a busca falhe.
+     * 
+     * busca um pedido e seus respectivos itens no banco de dados.
+     * @async
+     * @function buscarUm
+     * @returns {Promise<Array>} Retorna um unico pedido pelo seu id.
+     * @throws Mostra no console o erro e propaga o erro caso a busca falhe.
      */
     //-------------------------
     //LISTAR TODOS OS PEDIDOS

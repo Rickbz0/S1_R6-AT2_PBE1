@@ -2,6 +2,14 @@ const { UniqueIdentifier } = require("mssql");
 const { sql, getConnection } = require("../config/db");
 
 const entregasModel = {
+    /**
+     * busca todas as entragas e seus respectivos itens no banco de dados.
+     * 
+     * @async
+     * @function buscarTodos
+     * @returns {Promise<Array>} Retorna uma lista com todas as entregas e seus itens.
+     * @throws Mostra no console o erro e propaga o erro caso a busca falhe.
+     */
     //------------------------
     //LISTAR TODAS AS ENTREGAS
     //------------------------
