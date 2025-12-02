@@ -49,11 +49,11 @@ const clienteController = {
             }
 
             //verifica se o cpf já existe no banco de dados/se ja foi registrado
-            const clientes = await clienteModel.buscarUm(cpfCliente);
-            //se tiver o numero de clientes maior que zero, quer dizer que ja tem um cliente registrado com esse cpf
-            if (clientes.length>0) {
-                return res.status(409).json({erro: 'CPF já cadastrado!'});
-            }
+            // const clientes = await clienteModel.buscarUm(cpfCliente);
+            // //se tiver o numero de clientes maior que zero, quer dizer que ja tem um cliente registrado com esse cpf
+            // if (clientes.length>0) {
+            //     return res.status(409).json({erro: 'CPF já cadastrado!'});
+            // }
 
             // Chama o modelo para inserir o cliente no banco de dados
             await clienteModel.inserirCliente(nomeCliente, cpfCliente, telefoneCliente, emailCliente, enderecoCliente);
@@ -128,7 +128,7 @@ const clienteController = {
             res.status(200).json({message: "cliente deletado com sucesso"});
         } catch (error) {
             console.error('Erro ao deletar o cliente:',error);
-            res.status(500).json({erro: "Erro no servidor ao deletar o cliente"});
+            res.status(500).json({erro: "Erro no servidor ao deletar o cliente", errorMessage: error.message});
         }
     }
 

@@ -31,18 +31,26 @@ const clienteModel = {
     //-------------------
     //LISTAR UM CLIENTES
     //-------------------
+    /**
+     * busca Um e seus respectivos itens no banco de dados.
+     * 
+     * @async
+     * @function buscarUm
+     * @returns {Promise<Array>} Retorna uma lista com um unico cliente puxado pelo id e seus itens.
+     * @throws Mostra no console o erro e propaga o erro caso a busca falhe.
+     */
     buscarUm: async (idCliente) => {
         try {
             const pool = await getConnection();
-    
+
             const querysql = `SELECT * FROM Clientes WHERE idCliente = @idCliente`;
-    
+
             const result = await pool.request()
                 .input('idCliente', sql.UniqueIdentifier, idCliente)
                 .query(querysql);
-    
+
             return result.recordset;
-            
+
         } catch (error) {
             console.error('Erro ao buscar o cliente', error);
             throw error;
@@ -52,6 +60,19 @@ const clienteModel = {
     //---------------------
     //CRIAR NOVOS CLIENTES
     //---------------------
+    /**
+     * cria um novo cliente
+     * 
+     * @async
+     * @function inserirCliente
+     * @param {*} nomeCliente 
+     * @param {*} cpfCliente 
+     * @param {*} telefoneCliente 
+     * @param {*} emailCliente 
+     * @param {*} enderecoCliente 
+     * @returns {Promise<Object>} Retorna o cliente inserido, incluindo o ID gerado
+     * @throws Mostra no console o erro e propaga o erro caso a inserção falhe
+     */
     inserirCliente: async (nomeCliente, cpfCliente, telefoneCliente, emailCliente, enderecoCliente) => {
         try {
 
@@ -59,13 +80,15 @@ const clienteModel = {
 
             let querysql = 'INSERT INTO Clientes(nomeCliente, cpfCliente, telefoneCliente, emailCliente, enderecoCliente) VALUES(@nomeCliente, @cpfCliente, @telefoneCliente, @emailCliente, @enderecoCliente)';
 
-            await pool.request()
+             await pool.request()
                 .input('nomeCliente', sql.VarChar(100), nomeCliente)
                 .input('cpfCliente', sql.VarChar(11), cpfCliente)
                 .input('telefoneCliente', sql.Char(11), telefoneCliente)
                 .input('emailCliente', sql.VarChar(200), emailCliente)
                 .input('enderecoCliente', sql.VarChar(200), enderecoCliente)
                 .query(querysql);
+
+           
 
         } catch (error) {
             console.error('Erro ao inserir cliente', error);
@@ -76,10 +99,24 @@ const clienteModel = {
     //-------------------
     //ATUALIZAR CLIENTES
     //-------------------
+    /**
+     * atualiza um cliente especifico no banco de dados
+     * 
+     * @async
+     * @function atualizarCliente
+     * @param {*} idCliente 
+     * @param {*} nomeCliente 
+     * @param {*} cpfCliente 
+     * @param {*} telefoneCliente 
+     * @param {*} emailCliente 
+     * @param {*} enderecoClientes
+     * @returns {Promise<Object>} Retorna os dados atualizados do cliente
+     * @throws Mostra no console o erro e propaga o erro caso a atualização falhe
+     */
     atualizarCliente: async (idCliente, nomeCliente, cpfCliente, telefoneCliente, emailCliente, enderecoCliente) => {
         try {
             const pool = await getConnection();
-    
+
             const querysql = `
             UPDATE Clientes
                 SET nomeCliente = @nomeCliente,
@@ -89,7 +126,7 @@ const clienteModel = {
                     enderecoCliente = @enderecoCliente
                 WHERE idCliente = @idCliente 
             `
-    
+
             await pool.request()
                 .input('idCliente', sql.UniqueIdentifier, idCliente)
                 .input('nomeCliente', sql.VarChar(100), nomeCliente)
@@ -98,9 +135,9 @@ const clienteModel = {
                 .input('emailCliente', sql.VarChar(200), emailCliente)
                 .input('enderecoCliente', sql.VarChar(200), enderecoCliente)
                 .query(querysql);
-            
+
         } catch (error) {
-            console.error('Erro ao atualizar o Cliente:',error);
+            console.error('Erro ao atualizar o Cliente:', error);
             throw error;
         }
     },
@@ -108,7 +145,17 @@ const clienteModel = {
     //-------------------
     //DELETAR CLIENTES
     //-------------------
-    deletarCliente: async (idCliente)=>{
+    /**
+     * Deleta um cliente específico do banco de dados.
+     * 
+     * @async
+     * @function deletarCliente
+     * @param {*} idCliente - ID do cliente que será deletado.
+     * @returns {promise<object>} Não retorna nada caso a exclusão seja bem-sucedida.
+     * @throws Mostra no console o erro e propaga o erro caso a exclusão falhe.
+     */
+
+    deletarCliente: async (idCliente) => {
         try {
             const pool = await getConnection();
 
@@ -117,8 +164,12 @@ const clienteModel = {
             await pool.request()
                 .input('idCliente', sql.UniqueIdentifier, idCliente)
                 .query(querySQL);
+
+
+
+            return result;
         } catch (error) {
-            console.error('Erro ao deletar o Cliente:',error);
+            console.error('Erro ao deletar o Cliente:', error);
             throw error;
         }
     }

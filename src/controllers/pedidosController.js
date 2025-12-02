@@ -133,8 +133,7 @@ const pedidosController = {
             }
 
 
-            await pedidosModel.inserirPedido(
-                idCliente,
+            await pedidosModel.inserirPedido(idCliente,
                 dataPedido,
                 tipoEntrega,
                 distanciaKM,
@@ -167,6 +166,7 @@ const pedidosController = {
         try {
 
             const { idPedido } = req.params;
+          
             const {
                 idCliente,
                 dataPedido,
@@ -190,6 +190,8 @@ const pedidosController = {
 
             const pedidoAntigo = pedido[0];
             const entregaAntigo = await entregasModel.buscarUm(idPedido);
+            console.log('aaaaaaaaaaaaaaaaaaaaaaaaaaaaa ',pedido[0]);
+            
 
             if (idCliente) {
                 if (idCliente.length != 36) {
@@ -224,9 +226,10 @@ const pedidosController = {
             const pesoDaCargaAtualizado = pesoDaCarga ?? pedidoAtual.pesoDaCarga;
             const valorBaseKMatualizado = valorBaseKM ?? pedidoAtual.valorBaseKM;
             const valorBaseKGatualizado = valorBaseKG ?? pedidoAtual.valorBaseKG;
-            const statusEntregaAtualizado = statusEntrega ?? pedidoAtual.statusEntrega;
+            const statusEntregaAtualizado = statusEntrega ?? entregaAntigo[0].statusEntrega;
 
             const valorDistanciaAtualizado = distanciaKMatualizado * valorBaseKMatualizado;
+
             const valorPesoAtualizado = pesoDaCargaAtualizado * valorBaseKGatualizado;
 
             let valorBaseAtualizado = valorDistanciaAtualizado + valorPesoAtualizado;
@@ -266,16 +269,18 @@ const pedidosController = {
                 descontoAtualizado,
                 statusEntregaAtualizado,
                 valorDistanciaAtualizado,
+                taxaExtraAtualizado,
                 valorPesoAtualizado,
                 valorFinalAtualizado,
-                statusEntregaAtualizado
+                entregaAntigo[0].idEntrega
             );
 
             res.status(200).json({ mensagem: "Pedido atualizado com sucesso" });
 
         } catch (error) {
             console.error("Erro ao atualizar pedido:", error);
-            res.status(500).json({ erro: "Erro interno no servidor ao atualizar pedido" });
+            res.status(500).json({ erro: "Erro interno no servidor ao atualizar pedido",errorMessage: error.message });
+
         }
     },
 
@@ -295,7 +300,7 @@ const pedidosController = {
 
             await pedidosModel.deletarPedido(idPedido);
 
-            res.status(200).json({ mensagem: "Pedido e entrega deletado com sucesso" });
+            res.status(200).json({ mensagem: "Pedido deletado com sucesso" });
 
         } catch (error) {
             console.error("Erro ao deletar pedido:", error);

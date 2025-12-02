@@ -32,17 +32,25 @@ const entregasModel = {
     //-------------------
     //LISTAR UMA ENTREGA
     //-------------------
-    buscarUm: async (idEntrega) => {
+    /**
+     * listar somente uma entrega pelo id
+     * 
+     * @async
+     * @function buscarUm
+     * @param {*} idEntrega 
+     * @returns retorna uma lista com uma unica entrega buscada pelo id
+     */
+    buscarUm: async (idPedido) => {
         try {
             const pool = await getConnection();
 
             const querysql = `
             SELECT * FROM Entregas 
-            WHERE idEntrega = @idEntrega
+            WHERE idPedido = @idPedido
             `;
 
             const result = await pool.request()
-                .input('idEntrega', sql.UniqueIdentifier, idEntrega)
+                .input('idPedido', sql.UniqueIdentifier, idPedido)
                 .query(querysql);
 
             return result.recordset;
@@ -51,7 +59,46 @@ const entregasModel = {
             console.error('Erro ao buscar a entrega', error);
             throw error;
         }
+    },
+
+    //--------------------
+    //DELETAR UMA ENTREGA
+    //--------------------
+    /**
+     * deletar uma entrega relacionada a um pedido
+     * 
+     * @async
+     * @function deletarEntrega
+     * @param {*} idEntrega 
+     * @returns "mensagem": "entrega deletado com sucesso"
+     */
+    deletarEntrega: async (idEntrega) => {
+
+    const pool = await getConnection();
+
+    const transaction = new sql.Transaction(pool);
+    await transaction.begin(); // inicia a transação
+
+    try {
+
+        //delete da entrega
+        await transaction.request()
+            .input('idEntrega', sql.UniqueIdentifier, idEntrega)
+            .query(`
+                     DELETE FROM  Entregas
+                     WHERE idEntrega = @idEntrega
+                     `);
+
+        await transaction.commit();
+
+
+
+    } catch (error) {
+        await transaction.rollback();
+        console.error('Erro ao deletar a entrega', error);
+        throw error;
     }
+}
     
 
 }

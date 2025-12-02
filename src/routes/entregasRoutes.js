@@ -14,5 +14,7 @@ const e = require("express");
  */
 // GET /entregas -> listar uma ou mais entregas
 router.get("/entregas", entregasController.listarEntrega);
+// DELETE /entregas -> deletar uma entrega
+router.delete("/entregas/:idEntrega", entregasController.deletarEntrega);
 
 module.exports = { entregasRoutes: router };

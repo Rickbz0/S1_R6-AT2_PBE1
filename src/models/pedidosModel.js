@@ -10,11 +10,6 @@ const pedidosModel = {
      * @returns {Promise<Array>} Retorna uma lista com todos os pedidos e seus itens.
      * @throws Mostra no console o erro e propaga o erro caso a busca falhe.
      * 
-     * busca um pedido e seus respectivos itens no banco de dados.
-     * @async
-     * @function buscarUm
-     * @returns {Promise<Array>} Retorna um unico pedido pelo seu id.
-     * @throws Mostra no console o erro e propaga o erro caso a busca falhe.
      */
     //-------------------------
     //LISTAR TODOS OS PEDIDOS
@@ -37,6 +32,16 @@ const pedidosModel = {
     //-------------------
     //LISTAR UM PEDIDO
     //-------------------
+    /**
+     * Busca um pedido específico pelo ID e seus respectivos itens no banco de dados.
+     *
+     * @async
+     * @function buscarUm
+     * @param {number} idPedido - ID do pedido que será buscado.
+     * @returns {Promise<Object|null>} Retorna um objeto contendo o pedido e seus itens, 
+     * ou null caso o pedido não seja encontrado.
+     * @throws Mostra no console o erro e propaga o erro caso a busca falhe.
+     */
     buscarUm: async (idPedido) => {
         try {
             const pool = await getConnection();
@@ -57,6 +62,20 @@ const pedidosModel = {
     //-------------------------
     //CRIAR PEDIDOS E ENTREGAS
     //-------------------------
+
+    /**
+     * Insere um novo pedido e seus itens no banco de dados.
+     *
+     * @async
+     * @function inserirPedido
+     * @param {*} pedido - Objeto contendo os dados do pedido.
+     * @param {*} pedido.idCliente - ID do cliente que realizou o pedido.
+     * @param {*} - Lista de itens do pedido.
+     * @returns {*} Retorna os dados do pedido inserido, incluindo o ID gerado.
+     * @throws Mostra no console o erro e propaga o erro caso a inserção falhe.
+     */
+
+
     inserirPedido: async (idCliente, dataPedido, tipoEntrega, distanciaKM, pesoDaCarga, valorBaseKM, valorBaseKG, valorDistancia, valorPeso, acrescimo, desconto, taxaExtra, valorFinal, statusEntrega) => {
 
         const pool = await getConnection();
@@ -117,6 +136,16 @@ const pedidosModel = {
     //------------------
     //ATUALIZAR PEDIDOS
     //------------------
+    /**
+     * Atualiza os dados de um pedido existente no banco de dados.
+     *
+     * @async
+     * @function atualizarPedido
+     * @param {*} idPedido - ID do pedido que será atualizado.
+     * @param {*} dadosAtualizados - Objeto contendo os campos a serem atualizados.
+     * @returns {*} Retorna os dados atualizados do pedido.
+     * @throws Mostra no console o erro e propaga o erro caso a atualização falhe.
+     */
     atualizarPedido: async (
         idPedido,
         idCliente,
@@ -128,11 +157,30 @@ const pedidosModel = {
         valorBaseKG,
         acrescimo,
         desconto,
-        taxaExtra,
+        statusEntrega,
         valorDistancia,
+        taxaExtra,
         valorPeso,
         valorFinal,
-        statusEntrega) => {
+        idEntrega) => {
+
+            console.log(idPedido,
+        idCliente,
+        dataPedido,
+        tipoEntrega,
+        distanciaKM,
+        pesoDaCarga,
+        valorBaseKM,
+        valorBaseKG,
+        acrescimo,
+        desconto,
+        statusEntrega,
+        valorDistancia,
+        taxaExtra,
+        valorPeso,
+        valorFinal,
+        idEntrega);
+            
 
         const pool = await getConnection();
 
@@ -144,7 +192,7 @@ const pedidosModel = {
             const pool = await getConnection();
 
             //atualizar pedidos
-            const querySQL = `
+            let querySQL = `
                 UPDATE Pedidos
                 SET idCliente = @idCliente, 
                 dataPedido = @dataPedido, 
@@ -169,7 +217,7 @@ const pedidosModel = {
 
             //atualizar entrega
             querySQL = `
-            UPDATE Clientes
+            UPDATE Entregas
                 SET idPedido = @idPedido, 
                 valorDistancia = @valorDistancia, 
                 valorPeso = @valorPeso, 
@@ -178,19 +226,20 @@ const pedidosModel = {
                 taxaExtra = @taxaExtra, 
                 valorFinal = @valorFinal, 
                 statusEntrega = @statusEntrega
-                WHERE idCliente = @idCliente 
+                WHERE idEntrega = @idEntrega
             `;
 
             await transaction.request()
-                    .input('idPedido', sql.UniqueIdentifier, idPedido)
-                    .input('valorDistancia', sql.VarChar(100), valorDistancia)
-                    .input('valorPeso', sql.VarChar(11), valorPeso)
-                    .input('acrescimo', sql.Char(11), acrescimo)
-                    .input('desconto', sql.VarChar(200), desconto)
-                    .input('taxaExtra', sql.VarChar(200), taxaExtra)
-                    .input('valorFinal', sql.VarChar(200), valorFinal)
-                    .input('statusEntrega', sql.VarChar(200), statusEntrega)
-                    .query(querySQL);
+                .input('idPedido', sql.UniqueIdentifier, idPedido)
+                .input('valorDistancia', sql.Decimal(10, 2), valorDistancia)
+                .input('valorPeso', sql.Decimal(10, 2), valorPeso)
+                .input('acrescimo', sql.Decimal(10, 2), acrescimo)
+                .input('desconto', sql.Decimal(10, 2), desconto)
+                .input('taxaExtra', sql.Decimal(10, 2), taxaExtra)
+                .input('valorFinal', sql.Decimal(10, 2), valorFinal)
+                .input('statusEntrega', sql.VarChar(200), statusEntrega)
+                .input('idEntrega', sql.UniqueIdentifier, idEntrega)
+                .query(querySQL);
 
             await transaction.commit(); // confirma a transação(salva tudo no banco)
 
@@ -203,43 +252,53 @@ const pedidosModel = {
     },
 
 
-//-------------------
-//DELETAR PEDIDOS
-//-------------------
-deletarPedido: async (idPedido, idEntrega) => {
+    //-------------------
+    //DELETAR PEDIDOS
+    //-------------------
+    /**
+     * Deleta um pedido específico do banco de dados.
+     *
+     * @async
+     * @function deletarPedido
+     * @param {*} idPedido - ID do pedido que será deletado.
+     * @returns {*} "mensagem": "Pedido deletado com sucesso"
+     * @throws Mostra no console o erro e propaga o erro caso a exclusão falhe.
+     */
 
-    const pool = await getConnection();
+    deletarPedido: async (idPedido, idEntrega) => {
 
-    const transaction = new sql.Transaction(pool);
-    await transaction.begin(); // inicia a transação
+        const pool = await getConnection();
 
-    try {
+        const transaction = new sql.Transaction(pool);
+        await transaction.begin(); // inicia a transação
 
-        //delete do pedido
-        await transaction.request()
-            .input('idPedido', sql.UniqueIdentifier, idPedido)
-            .query(`
-                    DELETE FROM  Pedidos
-                    WHERE idPedido = @idPedido`);
+        try {
 
-        //delete da entrega
-        await transaction.request()
-            .input('idEntrega', sql.UniqueIdentifier, idEntrega)
-            .query(`
-                     DELETE FROM  Entregas
-                     WHERE idEntrega = @idEntrega
-                     `);
+            //delete do pedido
+            await transaction.request()
+                .input('idPedido', sql.UniqueIdentifier, idPedido)
+                .query(`
+                        DELETE FROM  Pedidos
+                        WHERE idPedido = @idPedido`);
 
-        await transaction.commit();
+            //delete da entrega
+            await transaction.request()
+                .input('idEntrega', sql.UniqueIdentifier, idEntrega)
+                .query(`
+                        DELETE FROM  Entregas
+                        WHERE idEntrega = @idEntrega
+                        `);
+
+            await transaction.commit();
 
 
 
-    } catch (error) {
-        await transaction.rollback();
-        console.error('Erro ao deletar o pedido e/ou a entrega', error);
-        throw error;
+        } catch (error) {
+            await transaction.rollback();
+            console.error('Erro ao deletar o pedido', error);
+            throw error;
+        }
     }
-}
 
 }
 
