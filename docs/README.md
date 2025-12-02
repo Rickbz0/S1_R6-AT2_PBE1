@@ -8,6 +8,7 @@
 #### GET /clientes
 - **Descrição**: Listar um ou mais clientes
 - **Response**: Array de clientes
+- **função**: /clientes/idcliente
 
 #### POST /clientes
 - **Descrição**: Cria um novo cliente
