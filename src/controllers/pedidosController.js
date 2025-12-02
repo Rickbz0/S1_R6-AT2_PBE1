@@ -67,6 +67,8 @@ const pedidosController = {
             } = req.body;
 
             //criar PEDIDO
+
+            //verificação se foi preenchido os campos
             if (idCliente == undefined ||
                 dataPedido == undefined ||
                 tipoEntrega == undefined ||
@@ -74,9 +76,15 @@ const pedidosController = {
                 pesoDaCarga == undefined ||
                 valorBaseKM == undefined ||
                 valorBaseKG == undefined
-            ) {
-                return res.status(400).json({ erro: "Campos obrigatorios não preenchidos" });
-            }
+            ) {return res.status(400).json({ erro: "Campos obrigatorios não preenchidos" })}
+
+            //verificação se é um valor numérico
+            if (isNaN(distanciaKM) ||
+                isNaN(pesoDaCarga) ||
+                isNaN(valorBaseKM) ||
+                isNaN(valorBaseKG)
+            ) {return res.status(400).json({ erro: "Alguns valores inseridos não são válidos" })}
+
 
             if (idCliente.length != 36) {
                 return res.status(400).json({ erro: "id do cliente invalido" });
