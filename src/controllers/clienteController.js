@@ -48,6 +48,13 @@ const clienteController = {
                 return res.status(400).json({ erro: 'Campos obrigatorios não preenchidos!' });
             }
 
+            //verifica se o cpf já existe no banco de dados/se ja foi registrado
+            const clientes = await clienteModel.buscarUm(cpfCliente);
+            //se tiver o numero de clientes maior que zero, quer dizer que ja tem um cliente registrado com esse cpf
+            if (clientes.length>0) {
+                return res.status(409).json({erro: 'CPF já cadastrado!'});
+            }
+
             // Chama o modelo para inserir o cliente no banco de dados
             await clienteModel.inserirCliente(nomeCliente, cpfCliente, telefoneCliente, emailCliente, enderecoCliente);
 

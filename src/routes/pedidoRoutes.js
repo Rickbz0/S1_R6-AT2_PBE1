@@ -10,6 +10,8 @@ const { pedidosController } = require("../controllers/pedidosController");
  * @description
  * - GET /Pedidos -> lista todos os pedidos do banco de dados.
  * - POST /pedidos -> criar um novo pedido e os seus itens com os dados enviados pelo cliente HTTP
+ * - PUT /Pedidos -> atualizar um novo pedido
+ * - DELETE /Delete -> deletar um pedido (junto deleta a entrega)
  */
 
 // GET /pedidos -> listar um ou mais pedidos
