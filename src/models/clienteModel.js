@@ -57,6 +57,25 @@ const clienteModel = {
         }
     },
 
+    buscar_CPF_Email: async (cpfCliente, emailCliente) => {
+        try {
+            const pool = await getConnection();
+
+            const querysql = `SELECT * FROM Clientes WHERE cpfCliente = @cpfCliente OR emailCliente = @emailCliente`;
+
+            const result = await pool.request()
+                .input('cpfCliente', sql.VarChar(11), cpfCliente)
+                .input('emailCliente', sql.VarChar(200), emailCliente)
+                .query(querysql);
+
+            return result.recordset;
+
+        } catch (error) {
+            console.error('Erro ao buscar cpf ou email do cliente', error);
+            throw error;
+        }
+    },
+
     //---------------------
     //CRIAR NOVOS CLIENTES
     //---------------------
